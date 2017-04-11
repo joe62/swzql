@@ -89,6 +89,15 @@ const Role = new GraphQLObjectType({
   })
 })
 
+const Quote = new GraphQLObjectType({
+  name: 'Quote',
+  fields: {
+    id: {type: GraphQLID},
+    text: {type: GraphQLString},
+    author: {type: GraphQLString}
+  }
+})
+
 const InputUser = new GraphQLInputObjectType({
   name: 'InputUser',
   fields: () => ({
@@ -150,6 +159,12 @@ const Query = new GraphQLObjectType({
       type: GraphQLInt,
       resolve(_,args,{db}){
         return db.getUsersCount()
+      }
+    },
+    Quotes: {
+      type: new GraphQLList(Quote),
+      resolve(_,args,{db}){
+        return db.getQuotes()
       }
     },
     user: {

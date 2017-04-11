@@ -107,6 +107,11 @@ function getUsersCount(){
 	const userString =`SELECT COUNT(*) AS count FROM users`
 	return queryaync(userString).then(rows=>rows[0].count)
 }
+function getQuotes(){
+	const userString =`SELECT * FROM quotes`
+	return queryaync(userString)
+}
+
 function getRoles(){
 	const userString =`SELECT * FROM roles`
 	return queryaync(userString)
@@ -213,5 +218,7 @@ db.updateUser = updateUser;
 db.deleteUser = deleteUser;
 db.getStore = getStore;
 db.getUsersCount = getUsersCount;
+db.getQuotes = getQuotes;
+
 export default db;
 
