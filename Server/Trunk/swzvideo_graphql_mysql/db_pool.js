@@ -103,7 +103,10 @@ function getUsers(){
 	const userString =`SELECT * FROM users`
 	return queryaync(userString)
 }
-
+function getUsersCount(){
+	const userString =`SELECT COUNT(*) AS count FROM users`
+	return queryaync(userString).then(rows=>rows[0].count)
+}
 function getRoles(){
 	const userString =`SELECT * FROM roles`
 	return queryaync(userString)
@@ -209,7 +212,6 @@ db.createRole = createRole;
 db.updateUser = updateUser;
 db.deleteUser = deleteUser;
 db.getStore = getStore;
-
+db.getUsersCount = getUsersCount;
 export default db;
-
 

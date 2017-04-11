@@ -146,6 +146,12 @@ const Query = new GraphQLObjectType({
         });
       }
     },
+    usersCount: {
+      type: GraphQLInt,
+      resolve(_,args,{db}){
+        return db.getUsersCount()
+      }
+    },
     user: {
       type: User,
       args: {
