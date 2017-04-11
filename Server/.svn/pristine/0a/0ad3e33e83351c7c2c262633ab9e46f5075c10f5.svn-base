@@ -1,0 +1,31 @@
+/* jshint indent: 1 */
+
+module.exports = function(sequelize, DataTypes) {
+	return sequelize.define('mcuvideomodel', {
+		ID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		Type: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		Model_s: {
+			type: DataTypes.STRING(50),
+			allowNull: false
+		},
+		Describe: {
+			type: DataTypes.STRING(50),
+			allowNull: true
+		},
+		URL: {
+			type: DataTypes.STRING(128),
+			allowNull: true
+		}
+	}, {
+		tableName: 'mcuvideomodel',
+		timestamps: false
+	});
+};

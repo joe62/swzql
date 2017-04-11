@@ -1,0 +1,86 @@
+import mysql  from 'mysql';
+const env       = process.env.NODE_ENV || 'development';
+const config    = require(__dirname + '/config.json')[env];
+
+
+const pool = mysql.createPool({
+	connectionLimit: 10,
+  host     : config.host,
+  user     : config.username,
+  password : config.password,
+  database : config.database
+});   
+
+function queryaync(sql){
+	console.log(sql)
+	return new Promise((resolve,reject)=>{
+		pool.getConnection((err,conn)=>{
+			if(err){
+					return reject(err)
+			}else {
+				var query = conn.query(sql,(error,rows,fields)=>{
+					if(error){
+						return reject(err)
+					}else {
+						conn.release()
+						return resolve(rows)
+					}
+				})
+			}
+		})
+	})
+}
+
+
+function getUsers(){
+	const userString =`SELECT id,usr,pwd,remark,mac, DomainGuid FROM users`
+	return queryaync(userString)
+}
+
+function getRoles(){
+	const userString =`SELECT * FROM roles`
+	return queryaync(userString)
+}
+
+function getRolesById(userIds){
+		const userString =`SELECT * FROM roles`
+		console.log(userIds)
+		return queryaync(userString)
+}
+
+function getUserById(id){
+	console.log(id)
+	const userString =`SELECT id,usr,pwd,remark,mac, DomainGuid FROM users WHERE id =${id}`
+	return queryaync(userString)
+}
+
+function getRotesByUserId(userid){
+
+	const userString =`
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = ${userid}`
+
+	return queryaync(userString)
+}
+
+function getRoleById(id){
+	const userString =`SELECT * FROM roles  WHERE roleid =${id}`
+	return queryaync(userString)
+}
+function getUserRolesByUserId(userid){
+	const userString =`SELECT roleid, DomainGuid FROM userroles  WHERE userid=${userid}`;
+	return queryaync(userString)	
+}
+
+const db = {};
+db.getUsers = getUsers;
+db.getUserById= getUserById;
+db.getRoles = getRoles;
+db.getRoleById= getRoleById;
+db.getRotesByUserId = getRotesByUserId;
+db.getUserRolesByUserId= getUserRolesByUserId;
+
+export default db;
+
+

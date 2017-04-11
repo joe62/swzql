@@ -1,0 +1,149 @@
+import mysql  from 'mysql';
+const env       = process.env.NODE_ENV || 'development';
+const config    = require(__dirname + '/../config/config.json')[env];
+
+ 		const connection = mysql.createConnection({
+  host     :  config.host,
+  user     : config.username,
+  password : config.password,
+  database : config.database
+});
+ 		
+ 			connection.connect();
+
+  function getUsers(){
+	 	return new Promise((resolve,reject)=>{
+
+				const userString =`SELECT id,usr,pwd,remark,mac, DomainGuid FROM users`;
+			
+			const query = connection.query(userString,function(err,rows,fields){
+			
+				if(err){
+					return reject(err);
+				}
+				else {
+					resolve(rows)
+				}
+		});
+		console.log(query.sql)	
+	
+ 	})
+
+
+}
+ 
+   function getRoles(){
+	 	return new Promise((resolve,reject)=>{
+
+				const userString =`SELECT * FROM roles`;
+			
+			const query = connection.query(userString,function(err,rows,fields){
+			
+				if(err){
+					return reject(err);
+				}
+				else {
+					resolve(rows)
+				}
+		});
+		console.log(query.sql)	
+	
+ 	})
+
+
+}
+
+
+function getUserById(id){
+	 	return new Promise((resolve,reject)=>{
+
+			const userString =`SELECT id,usr,pwd,remark,mac, DomainGuid FROM users WHERE id =?;`;
+				 const query_var = [id];
+			
+			const query = connection.query(userString,query_var,function(err,rows,fields){
+			
+				if(err){
+					return reject(err);
+				}
+				else {
+					resolve(rows[0])
+				}
+		});
+		console.log(query.sql)	
+	
+ 	})
+
+
+}
+
+  function getRotesByUserId(userid){
+	 	return new Promise((resolve,reject)=>{
+
+				const userString =`
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = ?`;
+			const query_var = [userid];
+			
+			const query = connection.query(userString,query_var,function(err,rows,fields){
+				if(err){
+					return reject(err);
+				}
+				else {
+					resolve(rows)
+				}
+		});
+		console.log(query.sql)	
+ 	})
+}
+
+
+
+  function getRoleById(id){
+	 	return new Promise((resolve,reject)=>{
+
+				const userString =`SELECT * FROM roles  WHERE roleid =?;`;
+			const query_var = [id];
+			
+			const query = connection.query(userString,query_var,function(err,rows,fields){
+				if(err){
+					return reject(err);
+				}
+				else {
+					resolve(rows[0])
+				}
+		});
+		console.log(query.sql)	
+ 	})
+}
+
+function getUserRolesByUserId(userid){
+		 	return new Promise((resolve,reject)=>{
+
+			const userString =`SELECT roleid, DomainGuid FROM userroles  WHERE userid=?;`;
+			const query_var = [userid];
+			
+			const query = connection.query(userString,query_var,function(err,rows,fields){
+				if(err){
+					return reject(err);
+				}
+				else {
+					console.log(rows)
+					resolve(rows)
+				}
+		});
+		console.log(query.sql)	
+ 	})
+}
+const db = {};
+//db.getUser= getUser;
+db.getUsers= getUsers;
+db.getUserById= getUserById;
+db.getRoles = getRoles;
+db.getRoleById= getRoleById;
+db.getRotesByUserId = getRotesByUserId;
+db.getUserRolesByUserId= getUserRolesByUserId;
+
+export default db;
+
+

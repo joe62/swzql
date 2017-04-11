@@ -1,0 +1,27 @@
+/* jshint indent: 1 */
+
+module.exports = function(sequelize, DataTypes) {
+	return sequelize.define('userroles', {
+		ID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		roleid: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		userid: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		DomainGuid: {
+			type: DataTypes.CHAR(36),
+			allowNull: false
+		}
+	}, {
+		tableName: 'userroles',
+		timestamps: false
+	});
+};

@@ -1,0 +1,72 @@
+/* jshint indent: 1 */
+
+module.exports = function(sequelize, DataTypes) {
+	return sequelize.define('events', {
+		ID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		EventID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		EventName: {
+			type: DataTypes.STRING(64),
+			allowNull: false
+		},
+		z1: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		},
+		z2: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		},
+		z3: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		},
+		z4: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		},
+		z5: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		},
+		z6: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		},
+		z7: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		},
+		memo: {
+			type: DataTypes.TEXT,
+			allowNull: true
+		},
+		needACK: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "0"
+		},
+		DomainID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		}
+	}, {
+		tableName: 'events',
+		timestamps: false
+	});
+};

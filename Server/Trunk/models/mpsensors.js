@@ -1,0 +1,51 @@
+/* jshint indent: 1 */
+
+module.exports = function(sequelize, DataTypes) {
+	return sequelize.define('MPSensors', {
+		SensorID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		DeviceID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		Name: {
+			type: DataTypes.STRING(100),
+			allowNull: false
+		},
+		Action: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		SensorNo: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		SensorType: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		Indx: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		Points: {
+			type: DataTypes.STRING(250),
+			allowNull: true
+		},
+		Statue: {
+			type: DataTypes.INTEGER(11),
+			allowNull: true
+		},
+		DT: {
+			type: DataTypes.DATE,
+			allowNull: false
+		}
+	}, {
+		tableName: 'MPSensors',
+		timestamps: false
+	});
+};

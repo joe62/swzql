@@ -1,0 +1,159 @@
+
+import {
+  graphql,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLNonNull,
+  GraphQLList,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLID,
+} from 'graphql'
+
+//import db from './db';
+
+const User = new GraphQLObjectType({
+  name: 'User',
+  fields: () => ({
+    id: {
+      type: GraphQLID
+    },
+    usr: {
+      type: GraphQLString
+    },
+    pwd: {
+      type: GraphQLString
+    },
+    remark: {
+      type: GraphQLString
+    },
+    mac: {
+      type: GraphQLString
+    },
+    DomainGUID: {
+      type: GraphQLString
+    },
+    roles: {
+      type: new GraphQLList(Role),
+      resolve(parent,args,{db}){
+        return db.getRotesByUserId(parent.id).then(rows=>{
+          return rows;
+        })
+      }
+    }
+  })
+});
+
+const Role = new GraphQLObjectType({
+  name: 'Role',
+  fields: ()=>({
+    roleid: {
+      type: GraphQLID
+    },
+    rolename: {
+      type: GraphQLString
+    },
+    ctrlgrade: {
+      type: GraphQLInt
+    },
+    access: {
+      type: GraphQLInt
+    },
+    usertype: {
+      type: GraphQLInt
+    },
+    user: {
+      type: User,
+      resolve(parent,args,{db}){
+
+        return db.getUserById(parent.roleid).then(row=>{
+          return row;
+        })
+      }
+    }
+  })
+})
+
+
+const Query = new GraphQLObjectType({
+  name: 'Query',
+  fields: () => ({
+    viewer: {
+      type: new GraphQLList(User),
+      resolve(_,args,{db}) {
+        return db.getUsers().then(row=>{
+          return row
+        }).catch(err=>{
+          console.log(err)
+        });
+      }
+    },
+    user: {
+      type: User,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID)
+        }
+      },
+      resolve(_,args,{db}){
+        return db.getUserById(args.id,args.usr).then(rows=>{
+          return rows[0]
+        }).catch(err=>{
+          console.log(err)
+        });
+      }
+    },
+    role: {
+      type: Role,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID)
+        }
+      },
+      resolve(parent,args,{db}){
+        return db.getRoleById(args.id).then(rows=>{
+          return rows[0]
+        })
+      }
+    },
+    roles: {
+      type: new GraphQLList(Role),
+      resolve(_,args,{db}){
+      return db.getRoles().then(rows=>{
+          return rows
+        })
+      }
+    }
+  })
+});
+
+
+
+const Mutation = new GraphQLObjectType({
+  name: 'RootMutationType',
+  fields: ()=>({
+      createUser: {
+        type: User,
+        args: {
+          usr: {type: GraphQLString},
+          pwd: {type: GraphQLString},
+          remark: {type:GraphQLString},
+          mac: {type: GraphQLString},
+          DomainGUID: {type: GraphQLString}
+        },
+        resolve: (source,args,{db})=>{
+//          console.log(args)
+          const user = {...args};
+          user.id = 100;
+          console.log(user)
+          return user
+        }
+      }
+  })
+});
+const Schema = new GraphQLSchema({
+  query: Query,
+  mutation: Mutation
+});
+
+export default Schema;

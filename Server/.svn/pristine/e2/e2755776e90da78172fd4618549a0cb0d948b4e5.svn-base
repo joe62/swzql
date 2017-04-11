@@ -1,0 +1,475 @@
+通过MySQL实现GraphQL用户角色查询
+================================
+
+### 启动
+
+     yarn start:mysql
+
+通过浏览器打开 http://u16041:8080/graphql
+
+![](images/open.png)
+
+### 测试
+
+#### 查询所有用户（包含角色 ）
+
+请求
+
+```
+{
+  viewer{
+    usr
+    roles{
+      rolename
+      access
+    }
+  }
+}
+
+```
+
+响应
+```js
+{
+  "data": {
+    "viewer": [
+      {
+        "usr": "admin",
+        "roles": [
+          {
+            "rolename": "管理员组",
+            "access": 39845871
+          }
+        ]
+      },
+      {
+        "usr": "admin1",
+        "roles": [
+          {
+            "rolename": "管理员组",
+            "access": 39845871
+          },
+          {
+            "rolename": "DEMO组",
+            "access": 86815
+          }
+        ]
+      },
+      {
+        "usr": "user",
+        "roles": [
+          {
+            "rolename": "操作组",
+            "access": 86815
+          }
+        ]
+      },
+      {
+        "usr": "demo",
+        "roles": [
+          {
+            "rolename": "DEMO组",
+            "access": 86815
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+请求
+
+```js
+{
+  viewer{
+    usr
+        remark
+  }
+}
+```
+
+
+响应
+
+```js
+{
+  "data": {
+    "viewer": [
+      {
+        "usr": "admin",
+        "remark": "admin"
+      },
+      {
+        "usr": "admin1",
+        "remark": "user"
+      },
+      {
+        "usr": "user",
+        "remark": "user"
+      },
+      {
+        "usr": "demo",
+        "remark": "user"
+      }
+    ]
+  }
+}
+```
+
+
+
+#### 通过用户Id查询用户信息（包含角色）
+
+请求
+```
+{
+  user(id:2){
+    usr
+    roles{
+      rolename
+      access
+    }
+  }
+}
+
+```
+
+响应
+
+```js
+{
+  "data": {
+    "user": {
+      "usr": "admin1",
+      "roles": [
+        {
+          "rolename": "管理员组",
+          "access": 39845871
+        },
+        {
+          "rolename": "DEMO组",
+          "access": 86815
+        }
+      ]
+    }
+  }
+}
+```
+
+`db.js`
+
+```js
+import mysql  from 'mysql';
+const env       = process.env.NODE_ENV || 'development';
+const config    = require(__dirname + '/../config/config.json')[env];
+
+        const connection = mysql.createConnection({
+  host     :  config.host,
+  user     : config.username,
+  password : config.password,
+  database : config.database
+});
+        
+            connection.connect();
+
+  function getUsers(){
+        return new Promise((resolve,reject)=>{
+
+                const userString =`SELECT id,usr,pwd,remark,mac, DomainGuid FROM users`;
+            
+            const query = connection.query(userString,function(err,rows,fields){
+            
+                if(err){
+                    return reject(err);
+                }
+                else {
+                    resolve(rows)
+                }
+        });
+        console.log(query.sql)  
+    
+    })
+
+
+}
+ 
+   function getRoles(){
+        return new Promise((resolve,reject)=>{
+
+                const userString =`SELECT * FROM roles`;
+            
+            const query = connection.query(userString,function(err,rows,fields){
+            
+                if(err){
+                    return reject(err);
+                }
+                else {
+                    resolve(rows)
+                }
+        });
+        console.log(query.sql)  
+    
+    })
+
+
+}
+
+
+function getUserById(id){
+        return new Promise((resolve,reject)=>{
+
+            const userString =`SELECT id,usr,pwd,remark,mac, DomainGuid FROM users WHERE id =?;`;
+                 const query_var = [id];
+            
+            const query = connection.query(userString,query_var,function(err,rows,fields){
+            
+                if(err){
+                    return reject(err);
+                }
+                else {
+                    resolve(rows[0])
+                }
+        });
+        console.log(query.sql)  
+    
+    })
+
+
+}
+
+  function getRotesByUserId(userid){
+        return new Promise((resolve,reject)=>{
+
+                const userString =`
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = ?`;
+            const query_var = [userid];
+            
+            const query = connection.query(userString,query_var,function(err,rows,fields){
+                if(err){
+                    return reject(err);
+                }
+                else {
+                    resolve(rows)
+                }
+        });
+        console.log(query.sql)  
+    })
+}
+
+
+
+  function getRoleById(id){
+        return new Promise((resolve,reject)=>{
+
+                const userString =`SELECT * FROM roles  WHERE roleid =?;`;
+            const query_var = [id];
+            
+            const query = connection.query(userString,query_var,function(err,rows,fields){
+                if(err){
+                    return reject(err);
+                }
+                else {
+                    resolve(rows[0])
+                }
+        });
+        console.log(query.sql)  
+    })
+}
+
+function getUserRolesByUserId(userid){
+            return new Promise((resolve,reject)=>{
+
+            const userString =`SELECT roleid, DomainGuid FROM userroles  WHERE userid=?;`;
+            const query_var = [userid];
+            
+            const query = connection.query(userString,query_var,function(err,rows,fields){
+                if(err){
+                    return reject(err);
+                }
+                else {
+                    console.log(rows)
+                    resolve(rows)
+                }
+        });
+        console.log(query.sql)  
+    })
+}
+const db = {};
+//db.getUser= getUser;
+db.getUsers= getUsers;
+db.getUserById= getUserById;
+db.getRoles = getRoles;
+db.getRoleById= getRoleById;
+db.getRotesByUserId = getRotesByUserId;
+db.getUserRolesByUserId= getUserRolesByUserId;
+
+export default db;
+
+
+
+```
+
+`schema.js`
+
+```js
+
+import {
+  graphql,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLNonNull,
+  GraphQLList,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLID,
+} from 'graphql'
+
+//import db from './db';
+
+const User = new GraphQLObjectType({
+  name: 'User',
+  fields: () => ({
+    id: {
+      type: GraphQLID
+    },
+    usr: {
+      type: GraphQLString
+    },
+    pwd: {
+      type: GraphQLString
+    },
+    remark: {
+      type: GraphQLString
+    },
+    mac: {
+      type: GraphQLString
+    },
+    DomainGUID: {
+      type: GraphQLString
+    },
+    roles: {
+      type: new GraphQLList(Role),
+      resolve(parent,args,{db}){
+        return db.getRotesByUserId(parent.id).then(rows=>{
+          return rows;
+        })
+      }
+    }
+  })
+});
+
+const Role = new GraphQLObjectType({
+  name: 'Role',
+  fields: ()=>({
+    roleid: {
+      type: GraphQLID
+    },
+    rolename: {
+      type: GraphQLString
+    },
+    ctrlgrade: {
+      type: GraphQLInt
+    },
+    access: {
+      type: GraphQLInt
+    },
+    usertype: {
+      type: GraphQLInt
+    },
+    user: {
+      type: User,
+      resolve(parent,args,{db}){
+
+        return db.getUserById(parent.roleid).then(row=>{
+          return row;
+        })
+      }
+    }
+  })
+})
+
+
+const Query = new GraphQLObjectType({
+  name: 'Query',
+  fields: () => ({
+    viewer: {
+      type: new GraphQLList(User),
+      resolve(_,args,{db}) {
+        return db.getUsers().then(row=>{
+          return row
+        }).catch(err=>{
+          console.log(err)
+        });
+      }
+    },
+    user: {
+      type: User,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID)
+        }
+      },
+      resolve(_,args,{db}){
+        return db.getUserById(args.id,args.usr).then(row=>{
+          return row
+        }).catch(err=>{
+          console.log(err)
+        });
+      }
+    },
+    role: {
+      type: Role,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID)
+        }
+      },
+      resolve(parent,args,{db}){
+        return db.getRoleById(args.id).then(row=>{
+          return row
+        })
+      }
+    },
+    roles: {
+      type: new GraphQLList(Role),
+      resolve(_,args,{db}){
+      return db.getRoles().then(rows=>{
+          return rows
+        })
+      }
+    }
+  })
+});
+
+const Schema = new GraphQLSchema({
+  query: Query
+});
+
+export default Schema;
+```
+
+`server.js`
+```js
+import express from 'express'
+import graphqlHTTP from 'express-graphql'
+import Schema from './schema';
+import {graphql} from 'graphql';
+import db from './db'
+
+
+
+
+const app = express()
+
+app.use('/graphql',graphqlHTTP({
+    schema: Schema,
+    rootValue:root,
+    graphiql:true,
+    context: {db}
+}));
+app.listen(8080,()=>console.log('Noe brower to u16041:8080/graphql'))
+```
+

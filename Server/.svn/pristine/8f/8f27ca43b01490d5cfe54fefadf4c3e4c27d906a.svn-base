@@ -1,0 +1,21 @@
+var models = require('./models/');
+// models.sequelize
+//     .authenticate()
+//     .then(()=>console.log('Connection OK'))
+//     .catch(error=>console.log('Error creating connection: ',error));
+
+// // 查询摄像机 
+// models.camtbl.findAll(
+// 	{attributes: ["camid","vsid","indx","campos"],
+// 		where: {vsid: [1,2,5,9]}}).then(cameras=>{
+// 	cameras.map(camera=>{
+//     //console.log(camera.get({'plain':true}))
+//     console.log(JSON.stringify(camera))
+// 	})
+// })
+
+models.roles.findAll().then(roles=>{
+	roles.map(role=>{
+		roles.users=models.
+	})
+})

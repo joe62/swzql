@@ -1,0 +1,51 @@
+/* jshint indent: 1 */
+
+module.exports = function(sequelize, DataTypes) {
+	return sequelize.define('AccessCtrlEmployees', {
+		EmployeeID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		CardNo: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		Name: {
+			type: DataTypes.STRING(50),
+			allowNull: false
+		},
+		Title: {
+			type: DataTypes.STRING(50),
+			allowNull: true
+		},
+		Telephone: {
+			type: DataTypes.STRING(50),
+			allowNull: false
+		},
+		Address: {
+			type: DataTypes.STRING(50),
+			allowNull: true
+		},
+		Birthday: {
+			type: DataTypes.DATE,
+			allowNull: true
+		},
+		Photo: {
+			type: "LONGBLOB",
+			allowNull: true
+		},
+		Note: {
+			type: DataTypes.TEXT,
+			allowNull: true
+		},
+		DomainID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: true
+		}
+	}, {
+		tableName: 'AccessCtrlEmployees',
+		timestamps: false
+	});
+};

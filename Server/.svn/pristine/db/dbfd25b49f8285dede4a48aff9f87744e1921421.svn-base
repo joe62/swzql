@@ -1,0 +1,28 @@
+const mysql      = require('mysql');
+var env       = process.env.NODE_ENV || 'development';
+var config    = require(__dirname + '/../config/config.json')[env];
+
+const connection = mysql.createConnection({
+  host     :  config.host,
+  user     : config.username,
+  password : config.password,
+  database : config.database
+});
+ 
+connection.connect();
+
+const cmdString =`SELECT r.*,u.ID, u.usr FROM userroles ur 
+INNER JOIN roles r ON ur.roleid=r.roleid
+INNER JOIN users u ON ur.userid=u.ID
+WHERE u.ID = 35;
+`;
+
+connection.query(cmdString, function (error, rows, fields) {
+  if (error) throw error;
+  for (var i = 0; i < rows.length; i++) {
+  	let row =rows[i];
+  	console.log(`${i+1}. ${row.rolename} ${row.usr}`)
+  }
+});
+ 
+connection.end();

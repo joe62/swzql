@@ -1,0 +1,186 @@
+GraphQL服务器环境构建笔记
+=========================
+###### by joe 2017.03.21
+
+### 从MySQL导出Swzvideo之Sequelize的Schema模型
+
+#### 步骤1 安装及初始化
+
+```bash
+yarn init -y && touch README.md    //初始化node项目
+yarn add -D sequelize mysql sequelize-auto
+```
+
+#### 步骤2 初始化化sequelize项目
+
+`安装`
+
+```
+yarn global add sequelize-cli //如果安装过就略过
+```
+
+`初始化`
+
+```bash
+
+root@u16041:~/Videocomm.SwzQL/Server/Trunk# sequelize init
+
+Sequelize [Node: 6.9.1, CLI: 2.6.0, ORM: 3.30.2]
+
+Created "config/config.json"
+Successfully created migrations folder at "/root/Videocomm.SwzQL/Server/Trunk/migrations".
+Successfully created seeders folder at "/root/Videocomm.SwzQL/Server/Trunk/seeders".
+Successfully created models folder at "/root/Videocomm.SwzQL/Server/Trunk/models".
+
+```
+
+修改`models/index.js`
+
+```diff
+
+fs
+  .readdirSync(__dirname)
+  .filter(function(file) {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(function(file) {
+-   var model = sequelize['import'](path.join(__dirname, file));
++   var model = sequelize.import(path.join(__dirname, file));
+    db[model.name] = model;
+  });
+
+```
+
+导出脚本`./sequelize_auto_export.js`
+
+```js
+const SequelizeAuto = require('sequelize-auto');
+const auto = new SequelizeAuto('swzvideo_8','root','Videocomm1',{
+    host: 'localhost',
+    dialect: 'mysql',
+    port: 3306,
+    output: './models',
+    additional: {
+        timestamps: false
+    },
+//    tables: ['users','roles','userroles']
+});
+
+auto.run(err=>{
+    if(err)throw err;
+
+    console.log(auto.tables);
+    console.log(auto.foreignKeys);
+
+})
+
+```
+
+`执行导出脚本`后，models文件夹里自动生成了与数据库表对应的shema
+
+    node sequelize_auto_export.js
+
+修改
+
+```diff
+        recdisk: {
+            type: DataTypes.STRING(8),
+            allowNull: false,
+-           defaultValue: "D:\"
++           defaultValue: "D:\\"
+        },
+```
+
+`验证`
+
+    node ./models/index.js
+
+
+#### 连接数据库
+
+**修改数据库配置文件**
+```js
+{
+  "development": {
+    "username": "root",
+    "password": "Videocomm1",
+    "database": "swzvideo_8",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "Videocomm1",
+    "database": "swzvideo_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "Videocomm1",
+    "database": "swzvideo_prod",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
+```
+
+db_demo.js
+
+```js
+var models = require('./models/');
+models.sequelize
+    .authenticate()
+    .then(()=>console.log('Connection OK'))
+    .catch(error=>console.log('Error creating connection: ',error));
+```
+
+
+#### 数据库查询操作
+
+**查询摄像机**
+
+```js
+
+
+            models.camtbl.findAll({attributes: ["camid","vsid","indx","campos"]}).then(cameras=>{
+            cameras.map(camera=>{
+                console.log(camera.get({'plain':true}))
+            })
+            //console.log(cameras.rows)
+        })
+```
+
+#### 通过MySQL.js直接访问数据库
+
+```js
+const mysql      = require('mysql');
+var env       = process.env.NODE_ENV || 'development';
+var config    = require(__dirname + '/../config/config.json')[env];
+
+const connection = mysql.createConnection({
+  host     :  config.host,
+  user     : config.username,
+  password : config.password,
+  database : config.database
+});
+ 
+connection.connect();
+
+const cmdString =`SELECT r.*,u.ID, u.usr FROM userroles ur 
+INNER JOIN roles r ON ur.roleid=r.roleid
+INNER JOIN users u ON ur.userid=u.ID
+WHERE u.ID = 35;
+`;
+
+connection.query(cmdString, function (error, rows, fields) {
+  if (error) throw error;
+  for (var i = 0; i < rows.length; i++) {
+    let row =rows[i];
+    console.log(`${i+1}. ${row.rolename} ${row.usr}`)
+  }
+});
+ 
+connection.end();
+```
+

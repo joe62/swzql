@@ -1,0 +1,67 @@
+/* jshint indent: 1 */
+
+module.exports = function(sequelize, DataTypes) {
+	return sequelize.define('tvwall', {
+		wallID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		wallIp: {
+			type: DataTypes.STRING(32),
+			allowNull: false
+		},
+		wallPort: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		cardno: {
+			type: DataTypes.INTEGER(11),
+			allowNull: true
+		},
+		videoout: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		videooutname: {
+			type: DataTypes.STRING(32),
+			allowNull: true
+		},
+		wallType: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		login: {
+			type: DataTypes.STRING(32),
+			allowNull: true
+		},
+		pass: {
+			type: DataTypes.STRING(32),
+			allowNull: true
+		},
+		screenno: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		DomainID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		areacount: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false
+		},
+		layout: {
+			type: DataTypes.INTEGER(11),
+			allowNull: true
+		},
+		initallayout: {
+			type: DataTypes.INTEGER(11),
+			allowNull: true
+		}
+	}, {
+		tableName: 'tvwall',
+		timestamps: false
+	});
+};

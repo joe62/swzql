@@ -1,0 +1,41 @@
+/* jshint indent: 1 */
+
+module.exports = function(sequelize, DataTypes) {
+	return sequelize.define('users', {
+		ID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		usr: {
+			type: DataTypes.STRING(32),
+			allowNull: false
+		},
+		pwd: {
+			type: DataTypes.STRING(38),
+			allowNull: false
+		},
+		remark: {
+			type: DataTypes.STRING(32),
+			allowNull: true
+		},
+		mac: {
+			type: DataTypes.STRING(18),
+			allowNull: true
+		},
+		grade: {
+			type: DataTypes.INTEGER(11),
+			allowNull: true,
+			defaultValue: "0"
+		},
+		domainID: {
+			type: DataTypes.INTEGER(11),
+			allowNull: false,
+			defaultValue: "1"
+		}
+	}, {
+		tableName: 'users',
+		timestamps: false
+	});
+};
