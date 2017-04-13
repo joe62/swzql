@@ -208,14 +208,7 @@ const Query = new GraphQLObjectType({
       resolve(parent,args,{db}){
         return db.getStore()
       }
-    },
-    hello: {
-      type: GraphQLString,
-      resolve(_,args,{db}){
-        return "Hello World";
-      }
     }
-
   })
 });
 

@@ -1,0 +1,913 @@
+
+实现Swzvideo数据库用户角色CRUD的GraphQL API
+============================================
+
+
+### 启动
+
+     yarn start:mysql
+
+通过浏览器打开 http://u16041:8080/graphql
+
+![](images/open.png)
+
+### GraphQL查询语言的用法 
+
+#### 查询所有用户（包含角色 ）
+
+请求
+
+```
+{
+  users {
+    ID
+    usr
+    roles{
+      roleid
+      rolename
+    }
+  }
+}
+```
+
+响应
+```js
+{
+  "data": {
+    "users": [
+      {
+        "ID": "1",
+        "usr": "admin",
+        "roles": [
+          {
+            "roleid": "1",
+            "rolename": "管理员组"
+          }
+        ]
+      },
+      {
+        "ID": "2",
+        "usr": "admin1",
+        "roles": [
+          {
+            "roleid": "1",
+            "rolename": "管理员组"
+          },
+          {
+            "roleid": "3",
+            "rolename": "DEMO组"
+          }
+        ]
+      },
+      {
+        "ID": "3",
+        "usr": "user",
+        "roles": [
+          {
+            "roleid": "2",
+            "rolename": "操作组"
+          }
+        ]
+      },
+      {
+        "ID": "4",
+        "usr": "demo",
+        "roles": [
+          {
+            "roleid": "3",
+            "rolename": "DEMO组"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+sql
+
+```sql
+SELECT ID,usr,pwd,remark,mac, DomainGuid FROM users
+
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = 1
+
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = 2
+
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = 3
+
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = 4
+
+```
+
+请求
+
+```js
+{
+  users {
+    ID
+    usr
+    remark
+  }
+}
+```
+
+
+响应
+
+```js
+{
+  "data": {
+    "users": [
+      {
+        "ID": "1",
+        "usr": "admin",
+        "remark": "admin"
+      },
+      {
+        "ID": "2",
+        "usr": "admin1",
+        "remark": "user"
+      },
+      {
+        "ID": "3",
+        "usr": "user",
+        "remark": "user"
+      },
+      {
+        "ID": "4",
+        "usr": "demo",
+        "remark": "user"
+      }
+    ]
+  }
+}
+```
+
+```sql
+SELECT ID,usr,pwd,remark,mac, DomainGuid FROM users
+```
+
+
+#### 通过用户Id查询用户信息（包含角色）
+
+请求
+```
+{
+  user(id:2){
+    usr
+    roles{
+      roleid
+      rolename
+    }
+  }
+}
+```
+
+响应
+
+```js
+{
+  "data": {
+    "user": {
+      "usr": "admin1",
+      "roles": [
+        {
+          "roleid": "1",
+          "rolename": "管理员组"
+        },
+        {
+          "roleid": "3",
+          "rolename": "DEMO组"
+        }
+      ]
+    }
+  }
+}
+```
+
+sql
+
+```sql
+SELECT ID,usr,pwd,remark,mac, DomainGuid FROM users WHERE id =2
+
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = 2
+```
+
+### 查询所有角色 (包含用户信息)
+
+请求
+
+```
+{
+  roles {
+    roleid
+    rolename
+    users{
+      ID
+      usr
+    }
+  }
+}
+```
+
+响应
+
+```js
+{
+  "data": {
+    "roles": [
+      {
+        "roleid": "1",
+        "rolename": "管理员组",
+        "users": [
+          {
+            "ID": "1",
+            "usr": "admin"
+          },
+          {
+            "ID": "2",
+            "usr": "admin1"
+          }
+        ]
+      },
+      {
+        "roleid": "2",
+        "rolename": "操作组",
+        "users": [
+          {
+            "ID": "3",
+            "usr": "user"
+          }
+        ]
+      },
+      {
+        "roleid": "3",
+        "rolename": "DEMO组",
+        "users": [
+          {
+            "ID": "2",
+            "usr": "admin1"
+          },
+          {
+            "ID": "4",
+            "usr": "demo"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+sql
+
+```sql
+SELECT * FROM roles
+
+SELECT u.* from userroles ur
+INNER JOIN users u ON ur.userid = u.id
+WHERE ur.roleid = 1
+
+SELECT u.* from userroles ur
+INNER JOIN users u ON ur.userid = u.id
+WHERE ur.roleid = 2
+
+SELECT u.* from userroles ur
+INNER JOIN users u ON ur.userid = u.id
+WHERE ur.roleid = 3
+```
+
+### 插入用户信息
+
+请求
+
+```js
+mutation {
+  createUser(
+          ID: 6,
+    usr: "joe-test",
+    pwd: "pass1",
+    remark: "admin1",
+    mac: "系统管理员",
+    grade: 255,
+    sip: "192.168.97.120",
+    DomainGUID: "D694CB16-0F8B-4BD3-BE8A-66F84F530223",
+    AutoID: 0
+  ){
+    usr
+    pwd
+    AutoID
+  }
+}
+```
+
+响应
+
+```js
+{
+  "data": {
+    "createUser": {
+      "usr": "joe-test",
+      "pwd": "pass1",
+      "AutoID": "9"
+    }
+  }
+}
+```
+
+sql
+
+```sql
+INSERT INTO users SET `ID` = 6, `usr` = 'joe-test', `pwd` = 'a722c63db8ec8625af6cf71cb8c2d939', `remark` = 'admin1', `mac` = '系统管理员', `grade` = 255, `sip` = '192.168.97.120', `DomainGUID` = 'D694CB16-0F8B-4BD3-BE8A-66F84F530223', `AutoID` = 0
+```
+
+### 插入角色信息
+
+请求
+
+```js
+mutation{
+  createRole(
+    roleid: 4,
+    rolename: "操作员1",
+    ctrlgrade: 250,
+    access: 86815,
+    usertype: 1,
+    DomainGUID: "D694CB16-0F8B-4BD3-BE8A-66F84F530223",
+    AutoID:0
+  ){
+    AutoID
+  }
+}
+```
+
+响应
+
+```js
+{
+  "data": {
+    "createRole": {
+      "AutoID": "4"
+    }
+  }
+}
+```
+
+sql
+
+```sql
+INSERT INTO roles SET `roleid` = '4', `rolename` = '操作员1', `ctrlgrade` = 250, `access` = 86815, `usertype` = 1, `DomainGUID` = 'D694CB16-0F8B-4BD3-BE8A-66F84F530223', `AutoID` = '0'
+```
+
+### 更新用户信息
+
+请求
+
+```js
+mutation {
+  updateUser(
+    ID:6,
+    inputUser: {
+      usr: "joet-1234",
+      pwd: "1234"
+    }
+  )
+}
+```
+
+响应
+
+```js
+{
+  "data": {
+    "updateUser": 1
+  }
+}
+```
+
+sql
+
+```sql
+UPDATE users SET `usr` = 'joet-1234', `pwd` = '81dc9bdb52d04dc20036dbd8313ed055' WHERE ID = 6
+```
+
+### 删除用户记录
+
+```js
+mutation {
+  deleteUser(ID:6)
+}
+```
+
+```js
+{
+  "data": {
+    "deleteUser": 1
+  }
+}
+```
+
+sql
+
+```sql
+DELETE FROM users WHERE ID = 6
+```
+
+## 源代码
+
+### 操作数据库
+
+`db_pool.js`
+
+```js
+import mysql  from 'mysql';
+import crypto from 'crypto';
+
+const env       = process.env.NODE_ENV || 'development';
+const config    = require(__dirname + '/config.json')[env];
+
+
+const pool = mysql.createPool({
+  connectionLimit: 10,
+  host     : config.host,
+  user     : config.username,
+  password : config.password,
+  database : config.database
+});   
+
+function queryaync(sql,id){
+  let querySring= sql
+  if(id)
+    querySring += pool.escape(id)
+
+  console.log(querySring)
+  return new Promise((resolve,reject)=>{
+    pool.getConnection((err,conn)=>{
+      if(err){
+          return reject(err)
+      }else {
+        var query = conn.query(querySring,(error,rows,fields)=>{
+          if(error){
+            return reject(err)
+          }else {
+            conn.release()
+            return resolve(rows)
+          }
+        })
+      }
+    })
+  })
+}
+
+function inertaync(sql,args){
+  return new Promise((resolve,reject)=>{
+    pool.getConnection((err,conn)=>{
+      if(err){
+          return reject(err)
+      }else {
+        var query = conn.query(sql,args,(error,rows,fields)=>{
+          console.log(query.sql)
+          if(error){
+            return reject(err)
+          }else {
+            conn.release()
+            console.log(rows.insertId)
+            return resolve(rows.insertId)
+          }
+        })
+      }
+    })
+  })
+}
+
+function updateaync(sql,args){
+  return new Promise((resolve,reject)=>{
+    pool.getConnection((err,conn)=>{
+      if(err){
+          return reject(err)
+      }else {
+        var query = conn.query(sql,args,(error,rows,fields)=>{
+          console.log(query.sql)
+          if(error){
+            return reject(err)
+          }else {
+            conn.release()
+            return resolve(rows.changedRows)
+          }
+        })
+      }
+    })
+  })
+}
+
+function deleteaync(sql,args){
+  return new Promise((resolve,reject)=>{
+    pool.getConnection((err,conn)=>{
+      if(err){
+          return reject(err)
+      }else {
+        var query = conn.query(sql,args,(error,rows,fields)=>{
+          console.log(query.sql)
+          if(error){
+            return reject(err)
+          }else {
+            conn.release()
+            return resolve(rows.affectedRows)
+          }
+        })
+      }
+    })
+  })
+}
+
+function getUsers(){
+  const userString =`SELECT * FROM users`
+  return queryaync(userString)
+}
+
+function getRoles(){
+  const userString =`SELECT * FROM roles`
+  return queryaync(userString)
+}
+
+function getRolesById(id){
+    const userString =`SELECT * FROM roles WHERE roleid=`
+    console.log(userIds)
+    return queryaync(userString,id)
+}
+
+function getUserById(id){
+  console.log(id)
+  const userString =`SELECT * FROM users WHERE id =`
+  return queryaync(userString,id)
+}
+
+function getUsersByRoleId(roleid){
+
+  const userString =`
+SELECT u.* from userroles ur
+INNER JOIN users u ON ur.userid = u.id
+WHERE ur.roleid = `
+
+  return queryaync(userString,roleid)
+}
+
+function getRotesByUserId(userid){
+
+  const userString =`
+SELECT r.* from userroles ur
+INNER JOIN roles r ON ur.roleid = r.roleid
+WHERE ur.userid = `
+
+  return queryaync(userString,userid)
+}
+
+function getRoleById(id){
+  const userString ='SELECT * FROM roles  WHERE roleid ='
+  return queryaync(userString,id)
+}
+function getUserRolesByUserId(userid){
+  const userString =`SELECT roleid, DomainGuid FROM userroles  WHERE userid=`;
+  return queryaync(userString,userid) 
+}
+
+function createUser(user){
+  const userString =`INSERT INTO users SET ?`
+  const usercpy = Object.assign({},user);
+  usercpy.pwd = crypto.createHash('md5').update(user.pwd).digest('hex');
+  return inertaync(userString,usercpy)
+}
+
+function createRole(role){
+  const userString =`INSERT INTO roles SET ?`
+  return inertaync(userString,role)
+}
+
+function updateUser(id,user){
+  const userString =`UPDATE users SET ? WHERE ID = ?`
+  const usercpy = Object.assign({},user);
+  if(user.pwd)
+    usercpy.pwd = crypto.createHash('md5').update(user.pwd).digest('hex');
+
+  return updateaync(userString,[usercpy,id])
+}
+
+function deleteUser(id){
+  const userString =`DELETE FROM users WHERE ID = ?`
+  return deleteaync(userString, id)
+}
+
+const db = {};
+db.getUsers = getUsers;
+db.getUserById= getUserById;
+db.getUsersByRoleId = getUsersByRoleId;
+db.getRoles = getRoles;
+db.getRoleById= getRoleById;
+db.getRotesByUserId = getRotesByUserId;
+db.getUserRolesByUserId= getUserRolesByUserId;
+db.createUser = createUser;
+db.createRole = createRole;
+db.updateUser = updateUser;
+db.deleteUser = deleteUser;
+
+export default db;
+```
+
+### 编写GraphQL的Schema
+
+`schema.js`
+
+```js
+
+import {
+  graphql,
+  GraphQLObjectType,
+  GraphQLInputObjectType,
+  GraphQLSchema,
+  GraphQLNonNull,
+  GraphQLList,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLID,
+} from 'graphql'
+
+//import db from './db';
+
+const User = new GraphQLObjectType({
+  name: 'User',
+  fields: () => ({
+    ID: {
+      type: GraphQLInt
+    },
+    usr: {
+      type: GraphQLString
+    },
+    pwd: {
+      type: GraphQLString
+    },
+    remark: {
+      type: GraphQLString
+    },
+    mac: {
+      type: GraphQLString
+    },
+    grade: {
+      type: GraphQLInt
+    },
+    sip: {
+      type: GraphQLString
+    },
+    DomainGUID: {
+      type: GraphQLString
+    },
+    AutoID: {
+      type: new GraphQLNonNull(GraphQLID)
+    },
+    roles: {
+      type: new GraphQLList(Role),
+      resolve(parent,args,{db}){
+        return db.getRotesByUserId(parent.ID).then(rows=>{
+          return rows;
+        })
+      }
+    }
+  })
+});
+
+const Role = new GraphQLObjectType({
+  name: 'Role',
+  fields: ()=>({
+    roleid: {
+      type: GraphQLID
+    },
+    rolename: {
+      type: GraphQLString
+    },
+    ctrlgrade: {
+      type: GraphQLInt
+    },
+    access: {
+      type: GraphQLInt
+    },
+    usertype: {
+      type: GraphQLInt
+    },
+    DomainGUID: {
+      type: GraphQLString
+    },
+    AutoID: {
+      type: GraphQLID
+    },
+    users: {
+      type: new GraphQLList(User),
+      resolve(parent,args,{db}){
+        return db.getUsersByRoleId(parent.roleid).then(rows=>{
+          return rows;
+        })
+      }
+    }
+  })
+})
+
+const InputUser = new GraphQLInputObjectType({
+  name: 'InputUser',
+  fields: () => ({
+    usr: {
+      type: GraphQLString
+    },
+    pwd: {
+      type: GraphQLString
+    },
+    remark: {
+      type: GraphQLString
+    },
+    mac: {
+      type: GraphQLString
+    },
+    grade: {
+      type: GraphQLInt
+    },
+    sip: {
+      type: GraphQLString
+    },
+    DomainGUID: {
+      type: GraphQLString
+    }
+  })
+});
+
+const Query = new GraphQLObjectType({
+  name: 'Query',
+  fields: () => ({
+    users: {
+      type: new GraphQLList(User),
+      resolve(_,args,{db}) {
+        return db.getUsers().then(row=>{
+          return row
+        }).catch(err=>{
+          console.log(err)
+        });
+      }
+    },
+    user: {
+      type: User,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID)
+        }
+      },
+      resolve(_,args,{db}){
+        return db.getUserById(args.id,args.usr).then(rows=>{
+          return rows[0]
+        }).catch(err=>{
+          console.log(err)
+        });
+      }
+    },
+    role: {
+      type: Role,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID)
+        }
+      },
+      resolve(parent,args,{db}){
+        return db.getRoleById(args.id).then(rows=>{
+          return rows[0]
+        })
+      }
+    },
+    roles: {
+      type: new GraphQLList(Role),
+      resolve(_,args,{db}){
+      return db.getRoles().then(rows=>{
+          return rows
+        })
+      }
+    }
+  })
+});
+
+
+
+const Mutation = new GraphQLObjectType({
+  name: 'RootMutationType',
+  fields: ()=>({
+      createUser: {
+        type: User,
+        args: {
+          ID: {type: GraphQLInt},
+          usr: {type: GraphQLString},
+          pwd: {type: GraphQLString},
+          remark: {type: GraphQLString},
+          mac: {type: GraphQLString},
+          grade: {type: GraphQLInt},
+          sip: {type: GraphQLString},
+          DomainGUID: {type: GraphQLString},
+          AutoID: {type: GraphQLInt}
+        },
+        resolve: (source,args,{db})=>{
+          const user = {...args};
+          return db.createUser(user).then((id)=>{
+            user.AutoID = id;
+            return user;
+          })
+        }
+      },
+      createRole: {
+        type: Role,
+        args: {
+          roleid: {type: new GraphQLNonNull(GraphQLID)},
+          rolename: {type: GraphQLString},
+          ctrlgrade: {type: GraphQLInt},
+          access: {type: GraphQLInt},
+          usertype: {type: GraphQLInt},
+          DomainGUID: {type: GraphQLString},
+          AutoID: {type: GraphQLID}
+        },
+        resolve: (source,args,{db})=>{
+          const role = {...args};
+          return db.createRole(role).then(id=>{
+            role.AutoID=id;
+            return role;
+          })
+        }
+      },
+      updateUser:{
+        type: GraphQLInt,
+        description: "1 = 更新成功 0 = 更新失败",
+        args: {
+          ID: {type: new GraphQLNonNull(GraphQLInt)},
+          inputUser: {type: InputUser}
+        },
+        resolve: (source,args,{db})=>{
+          return db.updateUser(args.ID,args.inputUser)
+            .then(num=>{
+              return num
+            })
+        }
+      },
+      deleteUser: {
+        type: GraphQLInt,
+        description: "删除用户操作 1 = 更新成功 0 = 更新失败",
+        args: {
+          ID: {type: new GraphQLNonNull(GraphQLInt)},
+        },
+        resolve: (source,args,{db})=>{
+          return db.deleteUser(args.ID)
+            .then(num=>{
+              return num
+            })
+        }
+      }
+  })
+});
+
+const Schema = new GraphQLSchema({
+  query: Query,
+  mutation: Mutation
+});
+
+export default Schema;
+```
+
+### 服务器程序
+
+`server.js`
+
+```js
+// https://www.reindex.io/blog/building-a-graphql-server-with-node-js-and-sql/
+import express from 'express'
+import graphqlHTTP from 'express-graphql'
+import Schema from './schema';
+import {graphql} from 'graphql';
+import db from './db_pool'
+
+const app = express()
+
+app.use('/graphql',graphqlHTTP({
+  schema: Schema,
+//  rootValue: Root,
+  graphiql:true,
+  context: {db}
+}));
+app.listen(8080,()=>console.log('Noe brower to u16041:8080/graphql'))
+```
+
+
+### 在命令行请求数据
+
+```bash
+$ curl -X POST -H "Content-Type: application/json" -d '{"query": "{users{ID usr}}"}' http://u16041:8080/graphql
+{"data":{"users":[{"ID":1,"usr":"admin"},{"ID":2,"usr":"admin1"},{"ID":3,"usr":"user"},{"ID":4,"usr":"demo"},{"ID":5,"usr":"joe"},{"ID":6,"usr":"joe-test"}]}}
+```
