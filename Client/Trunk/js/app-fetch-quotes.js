@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
+import Relay from 'relay';
 import Quote from './quote';
 
 class QuoteLibrary extends Component{
