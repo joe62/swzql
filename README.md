@@ -54,7 +54,7 @@ $ node server.js
 Running a Client at http://:::3000
 ···
 
-**在chrome浏览器中打开链接**[名言](http://u16041:3000/)
+**在chrome浏览器中打开链接**[用户信息](http://u16041:3000/)
 
 
 ![](quote.png)
