@@ -70,45 +70,49 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var QuotesLibrary = function (_Component) {
-	  _inherits(QuotesLibrary, _Component);
+	console.log(function (RQL_0) {
+	  return {
+	    children: [{
+	      children: [].concat.apply([], [{
+	        fieldName: 'id',
+	        kind: 'Field',
+	        metadata: {
+	          isRequisite: true
+	        },
+	        type: 'ID'
+	      }, _reactRelay2.default.QL.__frag(RQL_0)]),
+	      fieldName: 'allQuotes',
+	      kind: 'Field',
+	      metadata: {
+	        canHaveSubselections: true,
+	        isPlural: true
+	      },
+	      type: 'Quote'
+	    }],
+	    id: _reactRelay2.default.QL.__id(),
+	    kind: 'Fragment',
+	    metadata: {},
+	    name: 'AllQuotes',
+	    type: 'QuotesLibrary'
+	  };
+	}(_quote2.default.getFragment('quote')));
+
+	var QuotesLibrary = function (_React$Component) {
+	  _inherits(QuotesLibrary, _React$Component);
 
 	  function QuotesLibrary() {
-	    var _ref;
-
-	    var _temp, _this, _ret;
-
 	    _classCallCheck(this, QuotesLibrary);
 
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-
-	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = QuotesLibrary.__proto__ || Object.getPrototypeOf(QuotesLibrary)).call.apply(_ref, [this].concat(args))), _this), _this.state = { Quotes: [] }, _temp), _possibleConstructorReturn(_this, _ret);
+	    return _possibleConstructorReturn(this, (QuotesLibrary.__proto__ || Object.getPrototypeOf(QuotesLibrary)).apply(this, arguments));
 	  }
 
 	  _createClass(QuotesLibrary, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var _this2 = this;
-
-	      // 加载名言列表到this.state.allQuotes
-	      fetch('http://u16041:8080/graphql?query={\n      Quotes{id text author}\n    }').then(function (res) {
-	        return res.json();
-	      }).then(function (json) {
-	        return _this2.setState(json.data);
-	      }).catch(function (ex) {
-	        return console.error(ex);
-	      });
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
-	      console.log(this.state);
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'quotes-list' },
-	        this.state.Quotes.map(function (quote) {
+	        this.props.library.allQuotes.map(function (quote) {
 	          return _react2.default.createElement(_quote2.default, { key: quote.id, quote: quote });
 	        })
 	      );
@@ -116,10 +120,39 @@
 	  }]);
 
 	  return QuotesLibrary;
-	}(_react.Component);
+	}(_react2.default.Component);
 
 	QuotesLibrary = _reactRelay2.default.createContainer(QuotesLibrary, {
-	  fragments: {}
+	  fragments: {
+	    library: function library() {
+	      return function (RQL_0) {
+	        return {
+	          children: [{
+	            children: [].concat.apply([], [{
+	              fieldName: 'id',
+	              kind: 'Field',
+	              metadata: {
+	                isRequisite: true
+	              },
+	              type: 'ID'
+	            }, _reactRelay2.default.QL.__frag(RQL_0)]),
+	            fieldName: 'allQuotes',
+	            kind: 'Field',
+	            metadata: {
+	              canHaveSubselections: true,
+	              isPlural: true
+	            },
+	            type: 'Quote'
+	          }],
+	          id: _reactRelay2.default.QL.__id(),
+	          kind: 'Fragment',
+	          metadata: {},
+	          name: 'AllQuotes',
+	          type: 'QuotesLibrary'
+	        };
+	      }(_quote2.default.getFragment('quote'));
+	    }
+	  }
 	});
 
 	var AppRoute = function (_Relay$Route) {
@@ -135,6 +168,20 @@
 	}(_reactRelay2.default.Route);
 
 	AppRoute.routeName = 'App';
+	AppRoute.queries = {
+	  library: function library(Component) {
+	    return function (RQL_0) {
+	      return {
+	        children: [].concat.apply([], [_reactRelay2.default.QL.__frag(RQL_0)]),
+	        fieldName: 'quotesLibrary',
+	        kind: 'Query',
+	        metadata: {},
+	        name: 'QuotesLibrary',
+	        type: 'QuotesLibrary'
+	      };
+	    }(Component.getFragment('library'));
+	  }
+	};
 
 
 	(0, _reactDom.render)(_react2.default.createElement(_reactRelay2.default.RootContainer, {
@@ -46523,7 +46570,40 @@
 	  return Quote;
 	}(_react2.default.Component);
 
-	exports.default = Quote;
+	exports.default = _reactRelay2.default.createContainer(Quote, {
+	  fragments: {
+	    quote: function quote() {
+	      return function () {
+	        return {
+	          children: [{
+	            fieldName: 'text',
+	            kind: 'Field',
+	            metadata: {},
+	            type: 'String'
+	          }, {
+	            fieldName: 'author',
+	            kind: 'Field',
+	            metadata: {},
+	            type: 'String'
+	          }, {
+	            fieldName: 'id',
+	            kind: 'Field',
+	            metadata: {
+	              isGenerated: true,
+	              isRequisite: true
+	            },
+	            type: 'ID'
+	          }],
+	          id: _reactRelay2.default.QL.__id(),
+	          kind: 'Fragment',
+	          metadata: {},
+	          name: 'OneQuote',
+	          type: 'Quote'
+	        };
+	      }();
+	    }
+	  }
+	});
 
 /***/ }
 /******/ ]);

@@ -23,7 +23,7 @@ yarn add react react-dom
 ### 控制台获取用户数据
 
 ```bash 名言
-curl -X POST -H "Content-Type: ap Quotes{text author}}"}' http://u16041:8080/graphql
+curl -X POST -H "Content-Type: application/json" -d '{"query": "{Quotes{text author}}"}' http://u16041:8080/graphql
 
 {"data":{"Quotes":[{"text":"The best preparation for tomorrow is doing your best today","author":"H. Jackson Brown"},{"text":"If opportunity doesn't knock, build a door","author":"Milton Berle"},{"text":"Try to be a rainbow in someone's cloud","author":"Maya Angelou"}]}}
 

@@ -1,5 +1,7 @@
 const path = require('path');
 
+const GRAPHQL_PORT = 8080;
+
 module.exports = {
     entry: './js/app.js',
     output: {

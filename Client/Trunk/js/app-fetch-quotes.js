@@ -1,9 +1,8 @@
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import Relay from 'relay';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import Quote from './quote';
 
-class QuoteLibrary extends Component{
+class QuotesLibrary extends Component{
   state={Quotes: []};
   componentDidMount(){
     // 加载名言列表到this.state.allQuotes
@@ -27,4 +26,5 @@ class QuoteLibrary extends Component{
   }
 }
 
-render(<QuoteLibrary />,document.getElementById('react'));
+
+ReactDOM.render(<QuoteLibrary />,document.getElementById('react'));

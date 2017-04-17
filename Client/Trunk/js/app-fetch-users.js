@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {render} from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 class User extends React.Component{
   render(){
@@ -12,7 +12,7 @@ class User extends React.Component{
   }
 }
 
-class UsersLibrary extends Component{
+class UsersLibrary extends React.Component{
   state={users: []};
   componentDidMount(){
     fetch(`http://u16041:8080/graphql?query={

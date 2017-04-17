@@ -38,3 +38,6 @@ jspm_packages
 
 # SVN
 .svn
+
+## cache
+cache/schema.json

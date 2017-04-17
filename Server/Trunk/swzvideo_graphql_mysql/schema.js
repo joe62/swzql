@@ -15,6 +15,7 @@ import {
 
 const User = new GraphQLObjectType({
   name: 'User',
+  description: '用户',
   fields: () => ({
     ID: {
       type: GraphQLInt
@@ -56,6 +57,7 @@ const User = new GraphQLObjectType({
 
 const Role = new GraphQLObjectType({
   name: 'Role',
+  description: '角色',
   fields: ()=>({
     roleid: {
       type: GraphQLID
@@ -91,12 +93,28 @@ const Role = new GraphQLObjectType({
 
 const Quote = new GraphQLObjectType({
   name: 'Quote',
+  description: '名言',
   fields: {
     id: {type: GraphQLID},
     text: {type: GraphQLString},
     author: {type: GraphQLString}
   }
 })
+
+const QuotesLibraryType = new GraphQLObjectType({
+  name: 'QuotesLibrary',
+  fields: {
+    allQuotes: {
+      type: new GraphQLList(Quote),
+      description: '数据库中名言列表',
+      resolve: (_,args,{db})=>
+        db.getQuotes()
+    }
+  }
+})
+
+
+
 
 const InputUser = new GraphQLInputObjectType({
   name: 'InputUser',
@@ -142,11 +160,14 @@ const StoreType = new GraphQLObjectType({
   }),
 });
 
+const quotesLibrary = {};
+
 const Query = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     users: {
       type: new GraphQLList(User),
+      description: '用户列表',
       resolve(_,args,{db}) {
         return db.getUsers().then(row=>{
           return row
@@ -157,18 +178,26 @@ const Query = new GraphQLObjectType({
     },
     usersCount: {
       type: GraphQLInt,
+      description: '用户数量',
       resolve(_,args,{db}){
         return db.getUsersCount()
       }
     },
     Quotes: {
       type: new GraphQLList(Quote),
+      description: '名言列表',
       resolve(_,args,{db}){
         return db.getQuotes()
       }
     },
+    quotesLibrary: {
+      type: QuotesLibraryType,
+      description: 'The Quotes Library',
+      resolve: () => quotesLibrary
+    },
     user: {
       type: User,
+      description: '用户信息',
       args: {
         id: {
           type: new GraphQLNonNull(GraphQLID)
@@ -184,6 +213,7 @@ const Query = new GraphQLObjectType({
     },
     role: {
       type: Role,
+      description: '角色信息',
       args: {
         id: {
           type: new GraphQLNonNull(GraphQLID)
@@ -197,6 +227,7 @@ const Query = new GraphQLObjectType({
     },
     roles: {
       type: new GraphQLList(Role),
+      description: '角色列表',
       resolve(_,args,{db}){
       return db.getRoles().then(rows=>{
           return rows
@@ -205,12 +236,14 @@ const Query = new GraphQLObjectType({
     },
     store: {
       type: StoreType,
+      description: '故事',
       resolve(parent,args,{db}){
         return db.getStore()
       }
     },
     hello: {
       type: GraphQLString,
+      description: 'Hello',
       resolve(_,args,{db}){
         return "Hello World";
       }
@@ -247,6 +280,7 @@ const Mutation = new GraphQLObjectType({
       },
       createRole: {
         type: Role,
+        description: '创建角色',
         args: {
           roleid: {type: new GraphQLNonNull(GraphQLID)},
           rolename: {type: GraphQLString},
@@ -298,5 +332,7 @@ const Schema = new GraphQLSchema({
   query: Query,
   mutation: Mutation
 });
+
+
 
 export default Schema;

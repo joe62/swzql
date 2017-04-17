@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon ./hello-rawmodel/server.js --exec babel-node",
+    "start": "babel-node",
     "start:mutation": "nodemon ./hello-mutation/server.js --exec babel-node",
     "start:post5": "babel-node  ./build_graphql_server/server.js",
     "start:mysql": "nodemon ./swzvideo_graphql_mysql/server.js --exec babel-node"

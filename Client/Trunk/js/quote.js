@@ -12,4 +12,15 @@ class Quote extends React.Component{
   }
 }
 
-export default Quote;
+
+
+export default Relay.createContainer(Quote,{
+  fragments:{
+     quote: () => Relay.QL `
+      fragment OneQuote on Quote {
+        text
+        author
+      }
+     `
+  }
+})

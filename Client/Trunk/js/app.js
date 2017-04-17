@@ -1,38 +1,59 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {render} from 'react-dom';
+import Relay from 'react-relay';
+import Quote from './quote';
 
-class User extends React.Component{
+console.log(
+  Relay.QL `
+    fragment AllQuotes on QuotesLibrary {
+      allQuotes {
+        id
+        ${Quote.getFragment('quote')}
+      }
+    }
+  `
+)
+
+class QuotesLibrary extends React.Component{
   render(){
     return (
-      <blockquote>
-        <p>{this.props.user.usr}</p>
-        <footer>{JSON.stringify(this.props.user.roles)}</footer>
-      </blockquote>
-    )
-  }
-}
-
-class UsersLibrary extends Component{
-  state={users: []};
-  componentDidMount(){
-    fetch(`http://u16041:8080/graphql?query={
-      users {ID usr roles {rolename}}
-    }`)
-    .then(res=>res.json())
-    .then(json=>this.setState(json.data))
-    .catch(ex=>console.error(ex))
-  }
-  render(){
-    
-    return (
-      <div className="users-list">
-      
-        {this.state.users.map(user=>
-          <User key={user.ID} user={user} />
+      <div className="quotes-list">
+        {this.props.library.allQuotes.map(quote=>
+          <Quote key={quote.id} quote={quote} />
         )}
       </div>
     )
   }
 }
 
-render(<UsersLibrary />,document.getElementById('react'));
+QuotesLibrary = Relay.createContainer(QuotesLibrary,{
+  fragments:{
+    library: () => Relay.QL `
+    fragment AllQuotes on QuotesLibrary {
+      allQuotes {
+        id
+        ${Quote.getFragment('quote')}
+      }
+    }
+  `
+  }
+})
+
+class AppRoute extends Relay.Route{
+  static routeName = 'App';
+  static queries = {
+    library: (Component) => Relay.QL`
+      query QuotesLibrary {
+        quotesLibrary {
+          ${Component.getFragment('library')}
+        }
+      }
+    `
+  }
+}
+
+render(
+  <Relay.RootContainer 
+    Component={QuotesLibrary}
+    route={new AppRoute()}
+  />,document.getElementById('react'));
