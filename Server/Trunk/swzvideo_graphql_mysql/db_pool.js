@@ -107,8 +107,8 @@ function getUsersCount(){
 	const userString =`SELECT COUNT(*) AS count FROM users`
 	return queryaync(userString).then(rows=>rows[0].count)
 }
-function getQuotes(){
-	const userString =`SELECT * FROM quotes`
+function getQuotes(searchText=''){
+	const userString =`SELECT * FROM quotes where text like "%${searchText}%"`
 	return queryaync(userString)
 }
 

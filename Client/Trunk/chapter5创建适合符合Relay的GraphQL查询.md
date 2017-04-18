@@ -73,3 +73,49 @@ QuotesLibrary组件只关心每个quote中的Id，不需要其它属性。
 
 这是Relay中托盘概念的基本思想; 每个组件将为其数据要求提供Relay片段。 这些片段可以包含彼此，就像AllQuote片段包含OneQuote组件一样。 Relay将这些片段放在一起，并为应用起点形成一个GraphQL操作。
 
+
+通过Relay获取Quotes数据
+======================
+
+### 跨域访问代理设置
+
+`webpack.config.js`
+
+```js
+...
+appServer = new WebpackDevServer(compiler, {
+    hot: true,
+    inline: true,
+    contentBase: '/public/',
+    proxy: {'/graphql': `http://u16041:${GRAPHQL_PORT}`},
+    publicPath: '/js/',
+    stats: {colors: true}
+  });
+...
+```
+
+### 运行
+
+**服务器** `cd swzql/Server/Trunk/ && yarn start:mysql`
+**客户端** ` cd swzql/Client/Trunk/ && yarn start:dev` 
+
+打开[名言](http://u16041:3000/)
+
+### Relay's connection model
+
+用于分页显示列表
+
+#### 在schema.js中增加guotesConnection字段
+
+  yarn add -D graphql-relay
+
+```js
+import {
+  connectionDefinitions, // 
+  connectionArgs,
+  connectionFromArray,
+  connectionFromPromisedArray
+} from 'graphql-relay';
+```
+
+连接参数：first, last, afer, before

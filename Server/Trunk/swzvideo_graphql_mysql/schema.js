@@ -113,18 +113,25 @@ const { connectionType: QuotesConnectionType } = connectionDefinitions({
   nodeType: Quote
 })
 
+let connectionArgsWithSearch = connectionArgs;
+connectionArgsWithSearch.searchTerm={type: GraphQLString};
+
 const QuotesLibraryType = new GraphQLObjectType({
   name: 'QuotesLibrary',
-  description: 'Quote list type',
+  description: '名言集(可导航，可搜索)',
   fields: {
     quotesConnection: {
       type: QuotesConnectionType,
-      description: 'abc',
-      args: connectionArgs,
+      description: '存储于数据库中的名言集',
+      args: connectionArgsWithSearch,
       resolve: (_,args, {db})=>{
-        console.log(args);
+        let findParams = {};
+        if(args.searchTerm){
+          findParams.text=new RegExp(args.searchTerm,'i');
+        }
+        console.log(args,args.searchTerm);
         return connectionFromPromisedArray(
-          db.getQuotes(),
+          db.getQuotes(args.searchTerm),
           args
         )
       }
