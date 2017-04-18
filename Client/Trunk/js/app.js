@@ -1,43 +1,8 @@
 import React from 'react';
 import {render} from 'react-dom';
 import Relay from 'react-relay';
-import Quote from './quote';
+import QuotesLibrary from './app-relay-quotes';
 
-console.log(
-  Relay.QL `
-    fragment AllQuotes on QuotesLibrary {
-      allQuotes {
-        id
-        ${Quote.getFragment('quote')}
-      }
-    }
-  `
-)
-
-class QuotesLibrary extends React.Component{
-  render(){
-    return (
-      <div className="quotes-list">
-        {this.props.library.allQuotes.map(quote=>
-          <Quote key={quote.id} quote={quote} />
-        )}
-      </div>
-    )
-  }
-}
-
-QuotesLibrary = Relay.createContainer(QuotesLibrary,{
-  fragments:{
-    library: () => Relay.QL `
-    fragment AllQuotes on QuotesLibrary {
-      allQuotes {
-        id
-        ${Quote.getFragment('quote')}
-      }
-    }
-  `
-  }
-})
 
 class AppRoute extends Relay.Route{
   static routeName = 'App';

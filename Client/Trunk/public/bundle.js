@@ -46,8 +46,6 @@
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -58,9 +56,9 @@
 
 	var _reactRelay2 = _interopRequireDefault(_reactRelay);
 
-	var _quote = __webpack_require__(480);
+	var _appRelayQuotes = __webpack_require__(480);
 
-	var _quote2 = _interopRequireDefault(_quote);
+	var _appRelayQuotes2 = _interopRequireDefault(_appRelayQuotes);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -69,91 +67,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	console.log(function (RQL_0) {
-	  return {
-	    children: [{
-	      children: [].concat.apply([], [{
-	        fieldName: 'id',
-	        kind: 'Field',
-	        metadata: {
-	          isRequisite: true
-	        },
-	        type: 'ID'
-	      }, _reactRelay2.default.QL.__frag(RQL_0)]),
-	      fieldName: 'allQuotes',
-	      kind: 'Field',
-	      metadata: {
-	        canHaveSubselections: true,
-	        isPlural: true
-	      },
-	      type: 'Quote'
-	    }],
-	    id: _reactRelay2.default.QL.__id(),
-	    kind: 'Fragment',
-	    metadata: {},
-	    name: 'AllQuotes',
-	    type: 'QuotesLibrary'
-	  };
-	}(_quote2.default.getFragment('quote')));
-
-	var QuotesLibrary = function (_React$Component) {
-	  _inherits(QuotesLibrary, _React$Component);
-
-	  function QuotesLibrary() {
-	    _classCallCheck(this, QuotesLibrary);
-
-	    return _possibleConstructorReturn(this, (QuotesLibrary.__proto__ || Object.getPrototypeOf(QuotesLibrary)).apply(this, arguments));
-	  }
-
-	  _createClass(QuotesLibrary, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'quotes-list' },
-	        this.props.library.allQuotes.map(function (quote) {
-	          return _react2.default.createElement(_quote2.default, { key: quote.id, quote: quote });
-	        })
-	      );
-	    }
-	  }]);
-
-	  return QuotesLibrary;
-	}(_react2.default.Component);
-
-	QuotesLibrary = _reactRelay2.default.createContainer(QuotesLibrary, {
-	  fragments: {
-	    library: function library() {
-	      return function (RQL_0) {
-	        return {
-	          children: [{
-	            children: [].concat.apply([], [{
-	              fieldName: 'id',
-	              kind: 'Field',
-	              metadata: {
-	                isRequisite: true
-	              },
-	              type: 'ID'
-	            }, _reactRelay2.default.QL.__frag(RQL_0)]),
-	            fieldName: 'allQuotes',
-	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true,
-	              isPlural: true
-	            },
-	            type: 'Quote'
-	          }],
-	          id: _reactRelay2.default.QL.__id(),
-	          kind: 'Fragment',
-	          metadata: {},
-	          name: 'AllQuotes',
-	          type: 'QuotesLibrary'
-	        };
-	      }(_quote2.default.getFragment('quote'));
-	    }
-	  }
-	});
 
 	var AppRoute = function (_Relay$Route) {
 	  _inherits(AppRoute, _Relay$Route);
@@ -185,7 +98,7 @@
 
 
 	(0, _reactDom.render)(_react2.default.createElement(_reactRelay2.default.RootContainer, {
-	  Component: QuotesLibrary,
+	  Component: _appRelayQuotes2.default,
 	  route: new AppRoute()
 	}), document.getElementById('react'));
 
@@ -46512,6 +46425,180 @@
 
 /***/ },
 /* 480 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(36);
+
+	var _reactRelay = __webpack_require__(182);
+
+	var _reactRelay2 = _interopRequireDefault(_reactRelay);
+
+	var _quote = __webpack_require__(481);
+
+	var _quote2 = _interopRequireDefault(_quote);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var QuotesLibrary = function (_React$Component) {
+	  _inherits(QuotesLibrary, _React$Component);
+
+	  function QuotesLibrary() {
+	    _classCallCheck(this, QuotesLibrary);
+
+	    return _possibleConstructorReturn(this, (QuotesLibrary.__proto__ || Object.getPrototypeOf(QuotesLibrary)).apply(this, arguments));
+	  }
+
+	  _createClass(QuotesLibrary, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'quotes-list' },
+	        this.props.library.quotesConnection.edges.map(function (edge) {
+	          return _react2.default.createElement(_quote2.default, { key: edge.node.id, quote: edge.node });
+	        })
+	      );
+	    }
+	  }]);
+
+	  return QuotesLibrary;
+	}(_react2.default.Component);
+
+	exports.default = _reactRelay2.default.createContainer(QuotesLibrary, {
+	  fragments: {
+	    library: function library() {
+	      return function (RQL_0) {
+	        return {
+	          children: [{
+	            calls: [{
+	              kind: 'Call',
+	              metadata: {
+	                type: 'Int'
+	              },
+	              name: 'first',
+	              value: {
+	                kind: 'CallValue',
+	                callValue: 3
+	              }
+	            }],
+	            children: [{
+	              children: [{
+	                children: [].concat.apply([], [{
+	                  fieldName: 'id',
+	                  kind: 'Field',
+	                  metadata: {
+	                    isRequisite: true
+	                  },
+	                  type: 'ID'
+	                }, _reactRelay2.default.QL.__frag(RQL_0)]),
+	                fieldName: 'node',
+	                kind: 'Field',
+	                metadata: {
+	                  canHaveSubselections: true,
+	                  isRequisite: true
+	                },
+	                type: 'Quote'
+	              }, {
+	                fieldName: 'cursor',
+	                kind: 'Field',
+	                metadata: {
+	                  isGenerated: true,
+	                  isRequisite: true
+	                },
+	                type: 'String'
+	              }],
+	              fieldName: 'edges',
+	              kind: 'Field',
+	              metadata: {
+	                canHaveSubselections: true,
+	                isPlural: true
+	              },
+	              type: 'QuoteEdge'
+	            }, {
+	              children: [{
+	                fieldName: 'hasNextPage',
+	                kind: 'Field',
+	                metadata: {
+	                  isGenerated: true,
+	                  isRequisite: true
+	                },
+	                type: 'Boolean'
+	              }, {
+	                fieldName: 'hasPreviousPage',
+	                kind: 'Field',
+	                metadata: {
+	                  isGenerated: true,
+	                  isRequisite: true
+	                },
+	                type: 'Boolean'
+	              }],
+	              fieldName: 'pageInfo',
+	              kind: 'Field',
+	              metadata: {
+	                canHaveSubselections: true,
+	                isGenerated: true,
+	                isRequisite: true
+	              },
+	              type: 'PageInfo'
+	            }],
+	            fieldName: 'quotesConnection',
+	            kind: 'Field',
+	            metadata: {
+	              canHaveSubselections: true,
+	              isConnection: true
+	            },
+	            type: 'QuoteConnection'
+	          }],
+	          id: _reactRelay2.default.QL.__id(),
+	          kind: 'Fragment',
+	          metadata: {},
+	          name: 'App_LibraryRelayQL',
+	          type: 'QuotesLibrary'
+	        };
+	      }(_quote2.default.getFragment('quote'));
+	    }
+	  }
+	});
+
+	// class AppRoute extends Relay.Route{
+	//   static routeName = 'App';
+	//   static queries = {
+	//     library: (Component) => Relay.QL`
+	//       query QuotesLibrary {
+	//         quotesLibrary {
+	//           ${Component.getFragment('library')}
+	//         }
+	//       }
+	//     `
+	//   }
+	// }
+
+	// render(
+	//   <Relay.RootContainer 
+	//     Component={QuotesLibrary}
+	//     route={new AppRoute()}
+	//   />,document.getElementById('react'));
+
+/***/ },
+/* 481 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

@@ -11,6 +11,13 @@ import {
   GraphQLID,
 } from 'graphql'
 
+import {
+  connectionDefinitions,
+  connectionArgs,
+  connectionFromArray,
+  connectionFromPromisedArray
+} from 'graphql-relay';
+
 //import db from './db';
 
 const User = new GraphQLObjectType({
@@ -93,7 +100,7 @@ const Role = new GraphQLObjectType({
 
 const Quote = new GraphQLObjectType({
   name: 'Quote',
-  description: '名言',
+  description: 'Quote Type',
   fields: {
     id: {type: GraphQLID},
     text: {type: GraphQLString},
@@ -101,9 +108,27 @@ const Quote = new GraphQLObjectType({
   }
 })
 
+const { connectionType: QuotesConnectionType } = connectionDefinitions({
+  name: 'Quote',
+  nodeType: Quote
+})
+
 const QuotesLibraryType = new GraphQLObjectType({
   name: 'QuotesLibrary',
+  description: 'Quote list type',
   fields: {
+    quotesConnection: {
+      type: QuotesConnectionType,
+      description: 'abc',
+      args: connectionArgs,
+      resolve: (_,args, {db})=>{
+        console.log(args);
+        return connectionFromPromisedArray(
+          db.getQuotes(),
+          args
+        )
+      }
+    },
     allQuotes: {
       type: new GraphQLList(Quote),
       description: '数据库中名言列表',
@@ -113,7 +138,17 @@ const QuotesLibraryType = new GraphQLObjectType({
   }
 })
 
-
+const UsersLibraryType = new GraphQLObjectType({
+  name:'UsersLibrary',
+  description: 'User list type',
+  fields: {
+    allUsers: {
+      type: new GraphQLList(User),
+      description: '用户列表信息',
+      resolve: (_,args,{db})=> db.getUsers()
+    }
+  }
+})
 
 
 const InputUser = new GraphQLInputObjectType({
@@ -160,7 +195,8 @@ const StoreType = new GraphQLObjectType({
   }),
 });
 
-const quotesLibrary = {};
+const emptyLibrary = {};
+
 
 const Query = new GraphQLObjectType({
   name: 'Query',
@@ -193,7 +229,12 @@ const Query = new GraphQLObjectType({
     quotesLibrary: {
       type: QuotesLibraryType,
       description: 'The Quotes Library',
-      resolve: () => quotesLibrary
+      resolve: () => emptyLibrary
+    },
+    usersLibrary: {
+      type: UsersLibraryType,
+      description: 'The Users Library',
+      resolve: () =>emptyLibrary
     },
     user: {
       type: User,
