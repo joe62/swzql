@@ -23,29 +23,6 @@ import {
 
 //import db from './db';
 
-const globalIdFetcher = (globalId, { db }) => {
-  const { type, id } = fromGlobalId(globalId);
-  
-  switch (type) {
-    case 'QuotesLibrary':
-      // We only have one quote library
-      return emptyLibrary;
-    case 'Quote':
-    console.log(type,id)
-      return db.getQuote(id);
-    default:
-      return null;
-  }
-};
-
-const globalTypeResolver = obj => obj.type || Quote;
-
-const { nodeInterface, nodeField } = nodeDefinitions(
-  globalIdFetcher,
-  globalTypeResolver
-);
-
-
 const User = new GraphQLObjectType({
   name: 'User',
   description: '用户',
@@ -124,25 +101,46 @@ const Role = new GraphQLObjectType({
   })
 })
 
-const Quote = new GraphQLObjectType({
+
+
+
+const globalIdFetcher = (globalId, {db}) => {
+  const { type, id} = fromGlobalId(globalId);
+  switch(type){
+    case 'QuotesLibrary':
+      return emptyLibrary;
+    case 'Quote':
+      return db.getQuote(id);
+    default:
+      return null;
+  }
+}
+
+
+const { nodeInterface, nodeField } = nodeDefinitions(
+  globalIdFetcher,
+  globalTypeResolver
+);
+
+const QuoteType = new GraphQLObjectType({
   name: 'Quote',
   interfaces: [nodeInterface],
-  description: 'Quote Type',
   fields: {
-    id: globalIdField('Quote', obj => obj.id),
+    id: globalIdField('Quote', obj=>obj.id),
     text: {type: GraphQLString},
     author: {type: GraphQLString},
     likesCount: {
       type: GraphQLInt,
-      resolve: () => Math.floor(10 * Math.random())
+      resolve: ()=> Math.floor(10*Math.random())
     }
   }
 })
 
 const { connectionType: QuotesConnectionType } = connectionDefinitions({
   name: 'Quote',
-  nodeType: Quote
+  nodeType: QuoteType
 })
+
 
 let connectionArgsWithSearch = connectionArgs;
 connectionArgsWithSearch.searchTerm={type: GraphQLString};
@@ -165,13 +163,17 @@ const QuotesLibraryType = new GraphQLObjectType({
       }
     },
     allQuotes: {
-      type: new GraphQLList(Quote),
+      type: new GraphQLList(QuoteType),
       description: '数据库中名言列表',
       resolve: (_,args,{db})=>
         db.getQuotes()
     }
   }
 })
+
+const globalTypeResolver = obj => obj.type || QuoteType;
+
+const quotesLibrary = { type: QuotesLibraryType };
 
 const UsersLibraryType = new GraphQLObjectType({
   name:'UsersLibrary',
@@ -230,11 +232,11 @@ const StoreType = new GraphQLObjectType({
   }),
 });
 
-const emptyLibrary = { type: QuotesLibraryType };
+
 
 
 const Query = new GraphQLObjectType({
-  name: 'RootQuery',
+  name: 'Query',
   fields: () => ({
     node: nodeField,
     users: {
@@ -256,7 +258,7 @@ const Query = new GraphQLObjectType({
       }
     },
     Quotes: {
-      type: new GraphQLList(Quote),
+      type: new GraphQLList(QuoteType),
       description: '名言列表',
       resolve(_,args,{db}){
         return db.getQuotes()
@@ -265,12 +267,7 @@ const Query = new GraphQLObjectType({
     quotesLibrary: {
       type: QuotesLibraryType,
       description: 'The Quotes Library',
-      resolve: () => emptyLibrary
-    },
-    usersLibrary: {
-      type: UsersLibraryType,
-      description: 'The Users Library',
-      resolve: () =>emptyLibrary
+      resolve: () => quotesLibrary
     },
     user: {
       type: User,

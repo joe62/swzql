@@ -111,6 +111,10 @@ function getQuotes(searchText=''){
 	const userString =`SELECT * FROM quotes where text like "%${searchText}%"`
 	return queryaync(userString)
 }
+function getQuote(id){
+	const userString =`SELECT * FROM quotes where id = ${id}`
+	return queryaync(userString)
+}
 
 function getRoles(){
 	const userString =`SELECT * FROM roles`
@@ -219,6 +223,7 @@ db.deleteUser = deleteUser;
 db.getStore = getStore;
 db.getUsersCount = getUsersCount;
 db.getQuotes = getQuotes;
+db.getQuote=getQuote;
 
 export default db;
 

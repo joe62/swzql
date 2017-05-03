@@ -5,7 +5,7 @@
 
 ### 实现搜索
 
-利用Relay的连接模式实现名言显示条目数可控，现在实现在对全部名言的搜索功能。
+利用`Relay`的连接模式实现名言显示条目数可控，现在实现在对全部名言的搜索功能。
 
 #### 在GraphQL API中添加搜索功能
 
@@ -76,4 +76,7 @@ const QuotesLibraryType = new GraphQLObjectType({
 
 
 
+### GraphQL @include指令
+
+### Relay的全局ID
 

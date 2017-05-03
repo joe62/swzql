@@ -85,7 +85,15 @@
 	  library: function library(Component) {
 	    return function (RQL_0) {
 	      return {
-	        children: [].concat.apply([], [_reactRelay2.default.QL.__frag(RQL_0)]),
+	        children: [].concat.apply([], [{
+	          fieldName: 'id',
+	          kind: 'Field',
+	          metadata: {
+	            isGenerated: true,
+	            isRequisite: true
+	          },
+	          type: 'ID'
+	        }, _reactRelay2.default.QL.__frag(RQL_0)]),
 	        fieldName: 'quotesLibrary',
 	        kind: 'Query',
 	        metadata: {},
@@ -46512,9 +46520,7 @@
 	          children: [{
 	            calls: [{
 	              kind: 'Call',
-	              metadata: {
-	                type: 'Int'
-	              },
+	              metadata: {},
 	              name: 'first',
 	              value: {
 	                kind: 'CallValue',
@@ -46543,6 +46549,8 @@
 	                kind: 'Field',
 	                metadata: {
 	                  canHaveSubselections: true,
+	                  inferredRootCallName: 'node',
+	                  inferredPrimaryKey: 'id',
 	                  isRequisite: true
 	                },
 	                type: 'Quote'
@@ -46596,6 +46604,14 @@
 	              isConnection: true
 	            },
 	            type: 'QuoteConnection'
+	          }, {
+	            fieldName: 'id',
+	            kind: 'Field',
+	            metadata: {
+	              isGenerated: true,
+	              isRequisite: true
+	            },
+	            type: 'ID'
 	          }],
 	          id: _reactRelay2.default.QL.__id(),
 	          kind: 'Fragment',
@@ -63811,17 +63827,41 @@
 	  _inherits(Quote, _React$Component);
 
 	  function Quote() {
+	    var _ref;
+
+	    var _temp, _this, _ret;
+
 	    _classCallCheck(this, Quote);
 
-	    return _possibleConstructorReturn(this, (Quote.__proto__ || Object.getPrototypeOf(Quote)).apply(this, arguments));
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Quote.__proto__ || Object.getPrototypeOf(Quote)).call.apply(_ref, [this].concat(args))), _this), _this.showLikes = function () {
+	      _this.props.relay.setVariables({ showLikes: true });
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
 	  }
 
 	  _createClass(Quote, [{
+	    key: 'displayLikes',
+	    value: function displayLikes() {
+	      if (!this.props.relay.variables.showLikes) {
+	        return null;
+	      }
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        this.props.quote.likesCount,
+	        ' \xA0',
+	        _react2.default.createElement('span', { className: 'glyphicon glyphicon-thumbs-up' })
+	      );
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'blockquote',
-	        null,
+	        { onClick: this.showLikes },
 	        _react2.default.createElement(
 	          'p',
 	          null,
@@ -63831,7 +63871,8 @@
 	          'footer',
 	          null,
 	          this.props.quote.author
-	        )
+	        ),
+	        this.displayLikes()
 	      );
 	    }
 	  }]);
@@ -63840,6 +63881,9 @@
 	}(_react2.default.Component);
 
 	exports.default = _reactRelay2.default.createContainer(Quote, {
+	  initialVariables: {
+	    showLikes: false
+	  },
 	  fragments: {
 	    quote: function quote() {
 	      return function () {
@@ -63854,6 +63898,22 @@
 	            kind: 'Field',
 	            metadata: {},
 	            type: 'String'
+	          }, {
+	            directives: [{
+	              kind: 'Directive',
+	              name: 'include',
+	              args: [{
+	                name: 'if',
+	                value: {
+	                  kind: 'CallVariable',
+	                  callVariableName: 'showLikes'
+	                }
+	              }]
+	            }],
+	            fieldName: 'likesCount',
+	            kind: 'Field',
+	            metadata: {},
+	            type: 'Int'
 	          }, {
 	            fieldName: 'id',
 	            kind: 'Field',
